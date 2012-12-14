@@ -36,16 +36,16 @@ int SuperSensor::read() {
 }
 
 int SuperSensor::mean() { 
-  int sum = 0;
+  long sum = 0;
   for (int i=0; i < _values_count; i++) { 
     sum = sum + _values[i]; 
   }
-  _mean = (int) (sum / _values_count); 
+  _mean = (int) (sum / _values_count); // FIXME: truncate vs. round
   return(_mean); 
 }
 
 int SuperSensor::median() { 
-  _median_values = {}; // erase old readings, we only want the freshness
+  delete[] _median_values; // erase old readings, we only want the freshness
   _median_values_count = 0; // reset the counter too
 
   // create an ordered array of the latest values 
@@ -64,27 +64,25 @@ int SuperSensor::median() {
   return(_median); 
 }
 
-
 // NOTE: overloaded method
-void SuperSensor::_ordered_insert(int v) { 
-  _ordered_insert(v, 0); // call overloaded method specifying position arg
+void SuperSensor::_ordered_insert(int value) { 
+  _ordered_insert(value, 0); // call overloaded method with position arg
 }
  
 // NOTE: overloaded method, and recursive too
-void SuperSensor::_ordered_insert(int v, int pos) { 
+void SuperSensor::_ordered_insert(int value, int pos) { 
   for (int i=pos; i < _values_count; i++) { 
     if (_median_values_count < _values_count) { 
       if (i == _median_values_count) { 
-        _median_values[i] = v; 
+        _median_values[i] = value; 
         _median_values_count++; 
       }
-      else if (v < _median_values[i]) {
+      else if (value < _median_values[i]) {
         _ordered_insert(_median_values[i], i+1); 
-        _median_values[i] = v;   
-        _median_values_count++; 
+        _median_values[i] = value;   
       } 
-      else if (v >= _median_values[i]) { 
-        _ordered_insert(v, i+1); 
+      else if (value >= _median_values[i]) { 
+        _ordered_insert(value, i+1); 
       }
     }
   }
