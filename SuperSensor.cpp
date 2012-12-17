@@ -30,6 +30,7 @@ SuperSensor::SuperSensor(int pin, byte type, int sample_size) {
   _sample_size = sample_size; 
   int _values[_sample_size]; // create array of specified size
   _values_count = 0; // no values stored yet
+  int _median_values[_sample_size]; // create array of specified size
   _median_values_count = 0; // no values stored yet for median calculation 
 }
 
@@ -57,9 +58,11 @@ int SuperSensor::mean() {
 }
 
 int SuperSensor::median() { 
-  // FIXME: does delete [] work on a plain old array? 
-  delete[] _median_values; // erase old readings, we only want the freshness
-  _median_values_count = 0; // reset the counter too
+  // erase old readings, we only want the freshness
+  _median_values_count = 0; // reset the counter
+  // NOTE: There is no simple way to delete values within an array in C++,
+  //   without using a vector or a pointer. This means _median_values 
+  //   can contain old/garbage data, so do not access it directly.
 
   // create an ordered array of the latest values 
   for (int i=0; i < _values_count; i++) { 
@@ -67,6 +70,7 @@ int SuperSensor::median() {
   } 
   
   // median is the element in the middle of the ordered list of values
+  // FIXME: should we use _median_values_count instead of _values_count ?
   int midpoint = (int) _values_count / 2; 
   if (_values_count % 2 == 1) { // we have an odd number of values
     _median = _median_values[midpoint]; 
