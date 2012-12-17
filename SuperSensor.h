@@ -27,17 +27,19 @@
 
 class SuperSensor {
   public:
-    SuperSensor(int pin);
+    SuperSensor(int, byte, int);
     int read();
     int mean(); 
     int median(); 
   private:
     int _pin;
-    int _values[10]; // FIXME: user-definable size?
+    byte _type;
+    int _sample_size;
+    int _values[];
     int _values_count;
     int _mean;
     int _median;
-    int _median_values[10]; // FIXME: user-definable size?
+    int _median_values[]; 
     int _median_values_count;
     void _ordered_insert(int value);
     void _ordered_insert(int value, int pos);

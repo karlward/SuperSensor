@@ -24,10 +24,13 @@
 #include "SuperSensor.h"
 
 // Constructor
-SuperSensor::SuperSensor(int pin) {
+SuperSensor::SuperSensor(int pin, byte type, int sample_size) {
   _pin = pin;
+  _type = type; 
+  _sample_size = sample_size; 
+  int _values[_sample_size]; // create array of specified size
   _values_count = 0; // no values stored yet
-  _median_values_count = 0; // no values stored yet
+  _median_values_count = 0; // no values stored yet for median calculation 
 }
 
 int SuperSensor::read() {
@@ -93,7 +96,7 @@ void SuperSensor::_update(int latestValue) {
     _values[i] = _values[i-1]; // shift everything over 1 position, discarding last position
   } 
   _values[0] = latestValue; // set position 1 to current value
-  if (_values_count < 10) { 
+  if (_values_count < _sample_size) { 
     _values_count++; 
   }
 }
