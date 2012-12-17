@@ -26,7 +26,7 @@
 // Constructor
 SuperSensor::SuperSensor(int pin, byte type, int sample_size) {
   _pin = pin;
-  _type = type; 
+  _type = type; // e.g. SUPERSENSOR_ANALOG for an analog pin
   _sample_size = sample_size; 
   int _values[_sample_size]; // create array of specified size
   _values_count = 0; // no values stored yet
@@ -40,14 +40,24 @@ int SuperSensor::read() {
 
 int SuperSensor::mean() { 
   long sum = 0;
+  // sum all values
+  // NOTE: we're doing floating point math in long rather than float
   for (int i=0; i < _values_count; i++) { 
-    sum = sum + _values[i]; 
+    sum = sum + (_values[i] * 10); // multiply by 10 to do FP math
   }
-  _mean = (int) (sum / _values_count); // FIXME: truncate vs. round
-  return(_mean); 
+  _mean = (long) (sum / _values_count); // FIXME: is long cast necessary?
+  // figure out rounding, then divide by 10 to correct floating point
+  if (_mean % 10 < 5) { 
+    _mean = _mean / 10; // round down
+  } 
+  else { 
+    _mean = (_mean / 10) + 1; // round up
+  }
+  return(_mean); // FIXME: cast to int? 
 }
 
 int SuperSensor::median() { 
+  // FIXME: does delete [] work on a plain old array? 
   delete[] _median_values; // erase old readings, we only want the freshness
   _median_values_count = 0; // reset the counter too
 

@@ -25,6 +25,9 @@
 
 #include "Arduino.h"
 
+const byte SUPERSENSOR_ANALOG = 1; 
+const byte SUPERSENSOR_DIGITAL = 2; 
+
 class SuperSensor {
   public:
     SuperSensor(int, byte, int);
@@ -37,7 +40,7 @@ class SuperSensor {
     int _sample_size;
     int _values[];
     int _values_count;
-    int _mean;
+    long _mean;
     int _median;
     int _median_values[]; 
     int _median_values_count;
