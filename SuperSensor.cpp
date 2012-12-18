@@ -44,15 +44,15 @@ int SuperSensor::mean() {
   // sum all values
   // NOTE: we're doing floating point math in long rather than float
   for (int i=0; i < _values_count; i++) { 
-    sum = sum + (_values[i] * 10); // multiply by 10 to do FP math
+    sum = sum + (_values[i] * 100); // multiply by 100 to do FP math
   }
   _mean = (long) (sum / _values_count); // FIXME: is long cast necessary?
-  // figure out rounding, then divide by 10 to correct floating point
-  if (_mean % 10 < 5) { 
-    _mean = _mean / 10; // round down
+  // figure out rounding, then divide by 100 to correct floating point
+  if (_mean % 100 < 50) { 
+    _mean = _mean / 100; // round down
   } 
   else { 
-    _mean = (_mean / 10) + 1; // round up
+    _mean = (_mean / 100) + 1; // round up
   }
   return(_mean); // FIXME: cast to int? 
 }
@@ -80,6 +80,20 @@ int SuperSensor::median() {
   }
   return(_median); 
 }
+
+float SuperSensor::stdev() { 
+  // make sure we have the most recent mean calculated
+  mean();
+
+  // standard deviation calculation  
+  long sum = 0; 
+  for (int i=0; i < _values_count; i++) { 
+    sum = sum + (_values[i] - _mean)^2; 
+  } 
+  _stdev = sqrt(sum / (float) _values_count); 
+  
+  return(_stdev); 
+} 
 
 // NOTE: overloaded method
 void SuperSensor::_ordered_insert(int value) { 

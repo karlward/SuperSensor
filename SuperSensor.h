@@ -34,6 +34,7 @@ class SuperSensor {
     int read();
     int mean(); 
     int median(); 
+    float stdev(); 
   private:
     int _pin;
     byte _type;
@@ -42,6 +43,7 @@ class SuperSensor {
     int _values_count;
     long _mean;
     int _median;
+    float _stdev; 
     int _median_values[]; 
     int _median_values_count;
     void _ordered_insert(int value);
