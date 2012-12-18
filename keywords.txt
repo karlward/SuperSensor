@@ -15,4 +15,5 @@ SuperSensor   KEYWORD1
 read   KEYWORD2
 mean   KEYWORD2
 median   KEYWORD2
+stdev   KEYWORD2
 
