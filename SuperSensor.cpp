@@ -1,5 +1,10 @@
-/*
+/**
  * SuperSensor - Sensor reading with moving average baked-right-in!
+ * 
+ * SuperSensor reads digital or analog values from an Arduino pin, stores a 
+ * configurable number of recent values, and provides easy access to mean, 
+ * median, and standard deviation for the recent values. 
+ * 
  * Copyright 2012 Karl Ward
  * See the file CREDITS for details on external code referenced/incorporated
  * See the file COPYING for details on software licensing
@@ -25,9 +30,9 @@
 
 // Constructor
 SuperSensor::SuperSensor(int pin, byte type, int sample_size) {
-  _pin = pin;
-  _type = type; // e.g. SUPERSENSOR_ANALOG for an analog pin
-  _sample_size = sample_size; 
+  _pin = pin; // Arduino pin number
+  _type = type; // SUPERSENSOR_ANALOG or SUPERSENSOR_DIGITAL
+  _sample_size = sample_size; // how many values to use for mean, median, etc. 
   int _values[_sample_size]; // create array of specified size
   _values_count = 0; // no values stored yet
   int _median_values[_sample_size]; // create array of specified size
@@ -35,13 +40,24 @@ SuperSensor::SuperSensor(int pin, byte type, int sample_size) {
 }
 
 int SuperSensor::read() {
+  // shift everything over 1 position, discarding last position
   for (int i = (sizeof(_values) / sizeof(int)) - 1; i > 0; i--) { 
-    _values[i] = _values[i-1]; // shift everything over 1 position, discarding last position
+    _values[i] = _values[i-1]; 
   } 
-  _values[0] = analogRead(_pin); // set position 1 to current value
+
+  // read the pin, setting first element of _value array to latest value
+  if (_type == SUPERSENSOR_ANALOG) { 
+    _values[0] = analogRead(_pin);
+  else if (_type == SUPERSENSOR_DIGITAL) { 
+    _values[0] = digitalRead(_pin); 
+  } 
+
+  // keep track of how many values we have in _values array
   if (_values_count < _sample_size) { 
     _values_count++; 
   }
+
+  // return the latest value
   return(_values[0]); // first element of _values is always latest value
 }
 

@@ -1,5 +1,10 @@
-/*
+/**
  * SuperSensor - Sensor reading with moving average baked-right-in!
+ * 
+ * SuperSensor reads digital or analog values from an Arduino pin, stores a 
+ * configurable number of recent values, and provides easy access to mean,
+ * median, and standard deviation for the recent values. 
+ * 
  * Copyright 2012 Karl Ward
  * See the file CREDITS for details on external code referenced/incorporated
  * See the file COPYING for details on software licensing
