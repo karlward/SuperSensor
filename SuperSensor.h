@@ -48,7 +48,6 @@ class SuperSensor {
     int _median_values_count;
     void _ordered_insert(int value);
     void _ordered_insert(int value, int pos);
-    void _update(int); 
 };
 
 #endif

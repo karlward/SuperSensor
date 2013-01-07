@@ -35,7 +35,13 @@ SuperSensor::SuperSensor(int pin, byte type, int sample_size) {
 }
 
 int SuperSensor::read() {
-  _update(analogRead(_pin)); 
+  for (int i = (sizeof(_values) / sizeof(int)) - 1; i > 0; i--) { 
+    _values[i] = _values[i-1]; // shift everything over 1 position, discarding last position
+  } 
+  _values[0] = analogRead(_pin); // set position 1 to current value
+  if (_values_count < _sample_size) { 
+    _values_count++; 
+  }
   return(_values[0]); // first element of _values is always latest value
 }
 
@@ -118,14 +124,4 @@ void SuperSensor::_ordered_insert(int value, int pos) {
     }
   }
 } 
-
-void SuperSensor::_update(int latestValue) { 
-  for (int i = (sizeof(_values) / sizeof(int)) - 1; i > 0; i--) { 
-    _values[i] = _values[i-1]; // shift everything over 1 position, discarding last position
-  } 
-  _values[0] = latestValue; // set position 1 to current value
-  if (_values_count < _sample_size) { 
-    _values_count++; 
-  }
-}
 
